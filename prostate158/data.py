@@ -130,7 +130,7 @@ def segmentation_dataloaders(config: dict,
     cols = image_cols + label_cols
     for col in cols:
         # create absolute file name from relative fn in df and data_dir
-        df[col] = [os.path.join(data_dir, fn) for fn in df[col]]
+        df[col] = [os.path.join(data_dir, str(fn)) for fn in df[col]]
         if not os.path.exists(list(df[col])[0]):
             raise FileNotFoundError(list(df[col])[0])
 
