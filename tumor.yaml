@@ -6,7 +6,7 @@ out_dir: output
 model_dir: models
 log_dir: logs
 seed: 42
-device: 'cpu'
+device: 'cuda'
 data:
   data_dir: prostate158
   train_csv: prostate158/train.csv
@@ -108,5 +108,5 @@ loss:
     softmax: True
     to_onehot_y: True
 training:
-  max_epochs: 500
+  max_epochs: 10
   early_stopping_patience: 1000

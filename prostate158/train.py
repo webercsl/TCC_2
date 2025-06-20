@@ -377,12 +377,12 @@ class SegmentationTrainer(monai.engines.SupervisedTrainer):
         )
         eval_loss_handler.attach(self.evaluator, 'eval_loss')
         
-    def _get_meta_dict(self, batch) -> list: 
+    def _get_meta_dict(self, batch) -> list:
         "Get dict of metadata from engine. Needed as `batch_transform`"
-        image_cols=self.config.data.image_cols
-        image_name=image_cols[0] if isinstance(image_cols, list) else image_cols
-        key=f'{image_name}_meta_dict'
-        return [item[key] for item in batch]   
+        image_cols = self.config.data.image_cols
+        image_name = image_cols[0] if isinstance(image_cols, list) else image_cols
+        key = f'{image_name}_meta_dict'
+        return [item.get(key, {}) for item in batch]
         
     def load_checkpoint(self, checkpoint=None): 
         if not checkpoint: 

@@ -1,0 +1,5 @@
+val_mean_dice,0.28770479559898376
+MeanDice,0.28770479559898376
+HausdorffDistance,inf
+SurfaceDistance,inf
+eval_loss,1.5168185234069824

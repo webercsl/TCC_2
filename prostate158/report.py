@@ -153,31 +153,32 @@ class ReportGenerator():
         plt.imshow(ims, cmap=cmap, **kwargs)
         plt.axis('off')
         
-    def load_segmentation_image(self, fn): 
-        im = torch.load(fn).cpu().unsqueeze(0)
+    def load_segmentation_image(self, fn):
+        im = torch.load(fn, weights_only=False).cpu().unsqueeze(0)  # Desativar weights_only
         im = torch.nn.functional.interpolate(im, (224, 224, 112))
         im = im.argmax(1).squeeze()
-        im = self.get_slices(im, slices = (40, 48, 56, 74, 82, 90)) 
-        im = im/im.max() * 255
+        im = self.get_slices(im, slices=(40, 48, 56, 74, 82, 90))
+        im = im / im.max() * 255
         return im
     
     def generate_gif(self):
         with imageio.get_writer(
-            os.path.join(self.run_id,'report','progress.gif'),
-            mode='I', 
-            fps = max(self.train_logs.epoch) // 10) as writer: # make gif 10 seconds
+            os.path.join(self.run_id, 'report', 'progress.gif'),
+            mode='I',
+            fps=max(1, max(self.train_logs.epoch) // 10)) as writer:  # Mínimo de 1 fps
             for epoch in tqdm.tqdm(list(self.train_logs.epoch.unique())):
                 seg_fn = os.path.join(self.out_dir, 'preds', f"pred_epoch_{epoch}.pt")
-                if os.path.exists(seg_fn): im = self.load_segmentation_image(seg_fn)
+                if os.path.exists(seg_fn):
+                    im = self.load_segmentation_image(seg_fn)
 
                 plt_train_logs = self.train_logs[self.train_logs.epoch <= epoch]
                 loss_plt = self.plot_loss(plt_train_logs, self.metric_logs[:epoch])
-                loss_fig = self.get_arr_from_fig(loss_plt)[:,:,0]
+                loss_fig = self.get_arr_from_fig(loss_plt)[:, :, 0]
 
                 new_shape = im.shape[1], int(loss_fig.shape[0] / loss_fig.shape[1] * im.shape[1])
                 loss_fig = cv2.resize(loss_fig, (im.shape[1], im.shape[0]))
 
-                images = torch.cat([im, torch.tensor(loss_fig)], 0).numpy().astype(np.uint8)  
+                images = torch.cat([im, torch.tensor(loss_fig)], 0).numpy().astype(np.uint8)
                 writer.append_data(images)
 
                 loss_plt.clear()

@@ -6,7 +6,7 @@ out_dir: output
 model_dir: models
 log_dir: logs
 seed: 42
-device: 'cpu'
+device: 'cuda'
 data:
   data_dir: prostate158
   train_csv: prostate158/train.csv
@@ -20,7 +20,7 @@ data:
   test: False
   dataset_type: persistent
   cache_dir: /tmp/monai-cache
-  batch_size: 2
+  batch_size: 1
 transforms:
   # apply multiple transforms to the input. Comment out if a transform should not be applied
   # all arguments for specific transformes are passed as keyword arguments directly to the function
@@ -108,5 +108,5 @@ loss:
     softmax: True
     to_onehot_y: True
 training:
-  max_epochs: 5
+  max_epochs: 10
   early_stopping_patience: 1000
